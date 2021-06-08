@@ -6,11 +6,9 @@ import slackweb
 import subprocess
 import time
 from time import sleep
-# from fluent import sender
-# logger = sender.FluentSender('sensor', host = '127.0.0.1', port = 24224)
+from fluent import sender
+logger = sender.FluentSender('sensor', host = '127.0.0.1', port = 24224)
 import requests
-
-
 
 # 距離を読む関数
 def read_distance():
@@ -62,8 +60,7 @@ def read_distance():
 # from datetime import gspread
 # from linebot import LineBotApi
 # from linebot.models import TextSendMessage
-from variables import TOKEN
-from variables import CHANNEL
+from variables import TOKEN,CHANNEL
 
 while True:
     start_time = time.time()
@@ -87,14 +84,15 @@ while True:
         ret_dict = {
             'mean_dis': distance,
         }
-        # logger.emit('distance', ret_dict)
+        logger.emit('distance', ret_dict)
         if distance>50:
             print('動きを感知しました。')
             camera = picamera.PiCamera()
             dt_now = datetime.datetime.now()
             camera.close()
-            subprocess.run(['raspistill','-o','images/'+str(dt_now)+'.jpg'])
-            files = {'file': open('images/'+str(dt_now)+'.jpg', 'rb')}
+            subprocess.run(['raspistill','-o','/root/sensor_test/images/'+str(dt_now)+'.jpg'])
+
+            files = {'file': open('/root/sensor_test/images/'+str(dt_now)+'.jpg', 'rb')}
             param = {
                 'token':TOKEN,
                 'channels':CHANNEL,
@@ -111,7 +109,6 @@ while True:
             break
 
     # １秒間に１回実行するためのウェイトを入れる
-    # wait = 1
     wait = start_time + 1 - start_time
     if wait > 0:
         time.sleep(wait)
