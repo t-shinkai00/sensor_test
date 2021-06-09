@@ -85,7 +85,7 @@ while True:
             'mean_dis': distance,
         }
         logger.emit('distance', ret_dict)
-        if distance>50:
+        if distance>30:
             print('動きを感知しました。')
             camera = picamera.PiCamera()
             dt_now = datetime.datetime.now()
